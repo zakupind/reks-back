@@ -32,9 +32,7 @@ describe('UserRepository', () => {
 
     it('successfully signs up the user', () => {
       save.mockResolvedValue(undefined);
-      return expect(
-        userRepository.signUp(mockCredentialsDto),
-      ).resolves.not.toThrow();
+      expect(userRepository.signUp(mockCredentialsDto)).resolves.not.toThrow();
     });
 
     it('throws a conflict exception as username already exists', () => {

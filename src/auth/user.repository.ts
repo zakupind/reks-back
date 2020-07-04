@@ -6,7 +6,7 @@ import bcryptjs from 'bcryptjs';
 import { PostgresError } from 'pg-error-enum';
 import { EntityRepository, Repository } from 'typeorm';
 
-import { AuthCredentialsDto } from './auth-credentials.dto';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
 
 @EntityRepository(User)

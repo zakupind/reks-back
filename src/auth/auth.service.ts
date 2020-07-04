@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { AuthCredentialsDto } from './auth-credentials.dto';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { TokensDto } from './dto/tokens.dto';
 import { JwtPayload } from './jwt-payload.interface';
-import { TokensDto } from './tokens.dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()

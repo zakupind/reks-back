@@ -2,16 +2,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
 import { UserRepository } from './user.repository';
 
-describe('AuthService', () => {
-  let service: AuthService;
+describe('AuthController', () => {
+  let controller: AuthController;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const app: TestingModule = await Test.createTestingModule({
       imports: [
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
@@ -19,13 +20,16 @@ describe('AuthService', () => {
           signOptions: { expiresIn: '60s' },
         }),
       ],
+      controllers: [AuthController],
       providers: [AuthService, UserRepository, JwtStrategy],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    controller = app.get<AuthController>(AuthController);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('root', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
   });
 });

@@ -2,8 +2,6 @@ import 'dotenv/config';
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { environment } from './config';
-
 const config: TypeOrmModuleOptions = {
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -11,7 +9,7 @@ const config: TypeOrmModuleOptions = {
   username: process.env.POSTGRES_USER || 'postgres',
   password: process.env.POSTGRES_PASSWORD || 'postgres',
   database: process.env.POSTGRES_DB || 'postgres',
-  synchronize: environment === 'development',
+  synchronize: false,
   entities: [__dirname + '/**/*.entity.{js,ts}'],
   cli: {
     migrationsDir: 'src/migrations',

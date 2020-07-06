@@ -16,7 +16,7 @@ RUN npm install
 COPY . .
 
 # migrations
-RUN npm run typeorm:run
+# RUN npm run typeorm:run
 
 EXPOSE 3000
 CMD [ "npm", "start" ]

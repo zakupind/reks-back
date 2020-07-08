@@ -10,7 +10,7 @@ import {
 
 import { User } from './user.entity';
 
-@Entity({ name: 'sessions' })
+@Entity()
 export class Session extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

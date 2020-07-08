@@ -11,7 +11,7 @@ import {
 
 import { Session } from './session.entity';
 
-@Entity({ name: 'users' })
+@Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

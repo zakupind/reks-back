@@ -9,7 +9,6 @@
     "esModuleInterop": true,
     "target": "es2017",
     "sourceMap": true,
-    "baseUrl": "./",
     "outDir": "./dist",
     "incremental": true
   }

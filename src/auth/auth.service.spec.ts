@@ -1,10 +1,10 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthService } from './auth.service';
-import { jwtConstants } from './constants';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { JwtStrategy } from './jwt.strategy';
@@ -24,9 +24,14 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         PassportModule.register({ defaultStrategy: 'jwt' }),
-        JwtModule.register({
-          secret: jwtConstants.secret,
-          signOptions: { expiresIn: '60s' },
+        JwtModule.registerAsync({
+          useFactory: async (configService: ConfigService) => ({
+            secret: configService.get('JWT_SECRET'),
+            signOptions: {
+              expiresIn: '60s',
+            },
+          }),
+          inject: [ConfigService],
         }),
       ],
       providers: [AuthService, UserRepository, JwtStrategy],

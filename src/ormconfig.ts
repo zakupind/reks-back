@@ -1,6 +1,7 @@
-import 'dotenv/config';
-
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const config: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -18,8 +19,6 @@ const config: TypeOrmModuleOptions = {
   // Run migrations automatically,
   // you can disable this if you prefer running migration manually.
   migrationsRun: true,
-  logging: true,
-  logger: 'file',
 
   // Allow both start:prod and start:dev to use migrations
   // __dirname is either dist or src folder, meaning either

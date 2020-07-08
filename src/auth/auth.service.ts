@@ -49,7 +49,7 @@ export class AuthService {
       username = this.jwtService.verify<JwtPayload>(refreshToken).username;
     } catch (error) {
       throw new UnauthorizedException(
-        'Please, sign in with login form. Refresh token expired.',
+        'Please, sign in with login form. Refresh token has expired.',
       );
     }
 

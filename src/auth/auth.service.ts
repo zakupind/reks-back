@@ -40,4 +40,42 @@ export class AuthService {
 
     return tokensDto;
   }
+
+  async refresh(tokensDto: TokensDto): Promise<TokensDto> {
+    const { accessToken, refreshToken } = tokensDto;
+
+    let username: string;
+    try {
+      username = this.jwtService.verify<JwtPayload>(refreshToken).username;
+    } catch (error) {
+      throw new UnauthorizedException(
+        'Please, sign in with login form. Refresh token expired.',
+      );
+    }
+
+    const session = await this.sessionRepository.findOne({
+      where: {
+        accessToken,
+        refreshToken,
+      },
+    });
+
+    if (!session) {
+      throw new UnauthorizedException('Please, sign in with login form.');
+    }
+
+    const payload: JwtPayload = { username };
+
+    const newTokensDto: TokensDto = {
+      accessToken: this.jwtService.sign(payload),
+      refreshToken: this.jwtService.sign(payload, { expiresIn: '60d' }),
+    };
+
+    session.accessToken = newTokensDto.accessToken;
+    session.refreshToken = newTokensDto.refreshToken;
+
+    await session.save();
+
+    return newTokensDto;
+  }
 }

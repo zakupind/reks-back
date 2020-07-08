@@ -21,4 +21,11 @@ export class AuthController {
   ): Promise<void> {
     return this.authService.signUp(authCredentialsDto);
   }
+
+  @Post('refresh')
+  async refresh(
+    @Body(ValidationPipe) tokensDto: TokensDto,
+  ): Promise<TokensDto> {
+    return this.authService.refresh(tokensDto);
+  }
 }

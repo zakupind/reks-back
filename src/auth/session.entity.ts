@@ -21,6 +21,9 @@ export class Session extends BaseEntity {
   @Column()
   refreshToken: string;
 
+  @Column()
+  fingerprint: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

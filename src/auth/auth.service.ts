@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
+import { SignInCredentialsDto } from './dto/signin-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { SessionRepository } from './session.repository';
@@ -19,12 +21,12 @@ export class AuthService {
     return this.userRepository.signUp(authCredentialsDto);
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<TokensDto> {
+  async signIn(signInCredentialsDto: SignInCredentialsDto): Promise<TokensDto> {
     const user = await this.userRepository.validateUserPassword(
-      authCredentialsDto,
+      signInCredentialsDto,
     );
 
-    const { username } = user;
+    const { username, fingerprint } = signInCredentialsDto;
 
     if (!username) {
       throw new UnauthorizedException('Invalid credentials');
@@ -36,13 +38,15 @@ export class AuthService {
       refreshToken: this.jwtService.sign(payload, { expiresIn: '60d' }),
     };
 
-    await this.sessionRepository.addSession(user, tokensDto);
+    await this.sessionRepository.addSession(user, tokensDto, fingerprint);
 
     return tokensDto;
   }
 
-  async refresh(tokensDto: TokensDto): Promise<TokensDto> {
-    const { accessToken, refreshToken } = tokensDto;
+  async refresh(
+    refreshCredentialsDto: RefreshCredentialsDto,
+  ): Promise<TokensDto> {
+    const { accessToken, refreshToken, fingerprint } = refreshCredentialsDto;
 
     let username: string;
     try {
@@ -55,13 +59,22 @@ export class AuthService {
 
     const session = await this.sessionRepository.findOne({
       where: {
-        accessToken,
         refreshToken,
       },
     });
 
     if (!session) {
       throw new UnauthorizedException('Please, sign in with login form.');
+    }
+
+    const accessTokenDoesntMatch = session.accessToken !== accessToken;
+    const fingerprintDoesntMatch = session.fingerprint !== fingerprint;
+
+    if (accessTokenDoesntMatch || fingerprintDoesntMatch) {
+      session.remove();
+      throw new UnauthorizedException(
+        'Please, sign in with login form. Credentials dont match.',
+      );
     }
 
     const payload: JwtPayload = { username };

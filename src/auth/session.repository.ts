@@ -6,7 +6,11 @@ import { User } from './user.entity';
 
 @EntityRepository(Session)
 export class SessionRepository extends Repository<Session> {
-  async addSession(user: User, tokensDto: TokensDto): Promise<void> {
+  async addSession(
+    user: User,
+    tokensDto: TokensDto,
+    fingerprint: string,
+  ): Promise<void> {
     const sessions = await this.find({
       where: {
         userId: user.id,
@@ -22,6 +26,7 @@ export class SessionRepository extends Repository<Session> {
     session.user = user;
     session.accessToken = tokensDto.accessToken;
     session.refreshToken = tokensDto.refreshToken;
+    session.fingerprint = fingerprint;
     await session.save();
   }
 }

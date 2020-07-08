@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
-import { SignInCredentialsDto } from './dto/signin-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { SessionRepository } from './session.repository';
@@ -17,36 +16,48 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    return this.userRepository.signUp(authCredentialsDto);
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<TokensDto> {
+    const { username, fingerprint } = authCredentialsDto;
+
+    const user = await this.userRepository.signUp(authCredentialsDto);
+
+    const payload: JwtPayload = {
+      username,
+    };
+    const tokensDto = this.createTokens(payload);
+
+    return await this.sessionRepository.addSession(
+      user,
+      tokensDto,
+      fingerprint,
+    );
   }
 
-  async signIn(signInCredentialsDto: SignInCredentialsDto): Promise<TokensDto> {
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<TokensDto> {
     const user = await this.userRepository.validateUserPassword(
-      signInCredentialsDto,
+      authCredentialsDto,
     );
 
-    const { username, fingerprint } = signInCredentialsDto;
+    const { username, fingerprint } = authCredentialsDto;
 
     if (!username) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload: JwtPayload = { username };
-    const tokensDto: TokensDto = {
-      accessToken: this.jwtService.sign(payload),
-      refreshToken: this.jwtService.sign(payload, { expiresIn: '60d' }),
-    };
+    const tokensDto: TokensDto = this.createTokens(payload);
 
-    await this.sessionRepository.addSession(user, tokensDto, fingerprint);
-
-    return tokensDto;
+    return await this.sessionRepository.addSession(
+      user,
+      tokensDto,
+      fingerprint,
+    );
   }
 
   async refresh(
     refreshCredentialsDto: RefreshCredentialsDto,
   ): Promise<TokensDto> {
-    const { accessToken, refreshToken, fingerprint } = refreshCredentialsDto;
+    const { refreshToken, fingerprint } = refreshCredentialsDto;
 
     let username: string;
     try {
@@ -67,10 +78,9 @@ export class AuthService {
       throw new UnauthorizedException('Please, sign in with login form.');
     }
 
-    const accessTokenDoesntMatch = session.accessToken !== accessToken;
     const fingerprintDoesntMatch = session.fingerprint !== fingerprint;
 
-    if (accessTokenDoesntMatch || fingerprintDoesntMatch) {
+    if (fingerprintDoesntMatch) {
       session.remove();
       throw new UnauthorizedException(
         'Please, sign in with login form. Credentials dont match.',
@@ -79,16 +89,20 @@ export class AuthService {
 
     const payload: JwtPayload = { username };
 
-    const newTokensDto: TokensDto = {
-      accessToken: this.jwtService.sign(payload),
-      refreshToken: this.jwtService.sign(payload, { expiresIn: '60d' }),
-    };
+    const tokensDto: TokensDto = this.createTokens(payload);
 
-    session.accessToken = newTokensDto.accessToken;
-    session.refreshToken = newTokensDto.refreshToken;
+    session.accessToken = tokensDto.accessToken;
+    session.refreshToken = tokensDto.refreshToken;
 
     await session.save();
 
-    return newTokensDto;
+    return tokensDto;
+  }
+
+  private createTokens(jwtPayload: JwtPayload): TokensDto {
+    return {
+      accessToken: this.jwtService.sign(jwtPayload),
+      refreshToken: this.jwtService.sign(jwtPayload, { expiresIn: '60d' }),
+    };
   }
 }

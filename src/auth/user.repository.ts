@@ -7,12 +7,11 @@ import { PostgresError } from 'pg-error-enum';
 import { EntityRepository, Repository } from 'typeorm';
 
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { SignInCredentialsDto } from './dto/signin-credentials.dto';
 import { User } from './user.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
     const { username, password } = authCredentialsDto;
 
     const user = this.create();
@@ -30,12 +29,14 @@ export class UserRepository extends Repository<User> {
         throw new InternalServerErrorException();
       }
     }
+
+    return user;
   }
 
   async validateUserPassword(
-    signInCredentialsDto: SignInCredentialsDto,
+    authCredentialsDto: AuthCredentialsDto,
   ): Promise<User | null> {
-    const { username, password } = signInCredentialsDto;
+    const { username, password } = authCredentialsDto;
     const user = await this.findOne({ username });
 
     if (user && (await user.validatePassword(password))) {

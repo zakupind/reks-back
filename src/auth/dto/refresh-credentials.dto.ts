@@ -1,8 +1,9 @@
-import { IsString } from 'class-validator';
+import { IsString, Matches } from 'class-validator';
 
-import { TokensDto } from './tokens.dto';
-
-export class RefreshCredentialsDto extends TokensDto {
+export class RefreshCredentialsDto {
   @IsString()
   fingerprint: string;
+
+  @Matches(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/)
+  refreshToken: string;
 }

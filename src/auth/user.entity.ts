@@ -9,6 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { TokensDto } from './dto/tokens.dto';
+import { JwtPayload } from './jwt-payload.interface';
 import { Session } from './session.entity';
 
 @Entity()

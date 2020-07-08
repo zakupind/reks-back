@@ -10,7 +10,7 @@ export class SessionRepository extends Repository<Session> {
     user: User,
     tokensDto: TokensDto,
     fingerprint: string,
-  ): Promise<void> {
+  ): Promise<TokensDto> {
     const sessions = await this.find({
       where: {
         userId: user.id,
@@ -28,5 +28,7 @@ export class SessionRepository extends Repository<Session> {
     session.refreshToken = tokensDto.refreshToken;
     session.fingerprint = fingerprint;
     await session.save();
+
+    return tokensDto;
   }
 }

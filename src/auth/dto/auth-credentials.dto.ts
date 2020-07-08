@@ -10,4 +10,7 @@ export class AuthCredentialsDto {
   @MinLength(8)
   @MaxLength(20)
   password: string;
+
+  @IsString()
+  fingerprint: string;
 }

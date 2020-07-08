@@ -4,12 +4,14 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { JwtPayload } from './jwt-payload.interface';
+import { SessionRepository } from './session.repository';
 import { UserRepository } from './user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly sessionRepository: SessionRepository,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -18,20 +20,24 @@ export class AuthService {
   }
 
   async signIn(authCredentialsDto: AuthCredentialsDto): Promise<TokensDto> {
-    const username = await this.userRepository.validateUserPassword(
+    const user = await this.userRepository.validateUserPassword(
       authCredentialsDto,
     );
+
+    const { username } = user;
 
     if (!username) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload: JwtPayload = { username };
-    const tokenDto: TokensDto = {
+    const tokensDto: TokensDto = {
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, { expiresIn: '60d' }),
     };
 
-    return tokenDto;
+    await this.sessionRepository.addSession(user, tokensDto);
+
+    return tokensDto;
   }
 }

@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
+import { SessionRepository } from './session.repository';
 import { UserRepository } from './user.repository';
 
 @Module({
@@ -16,7 +17,7 @@ import { UserRepository } from './user.repository';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
-    TypeOrmModule.forFeature([UserRepository]),
+    TypeOrmModule.forFeature([UserRepository, SessionRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

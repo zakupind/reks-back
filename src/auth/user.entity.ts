@@ -4,9 +4,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Session } from './session.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -30,6 +33,9 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(type => Session, session => session.user, { eager: true })
+  sessions: Session[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hashed = await bcryptjs.hash(password, this.salt);

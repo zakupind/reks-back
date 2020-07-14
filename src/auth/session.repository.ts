@@ -28,7 +28,7 @@ export class SessionRepository extends Repository<Session> {
     session.accessToken = tokensDto.accessToken;
     session.refreshToken = tokensDto.refreshToken;
     session.fingerprint = fingerprint;
-    await session.save();
+    await this.save(session);
 
     return tokensDto;
   }
@@ -45,7 +45,7 @@ export class SessionRepository extends Repository<Session> {
     });
 
     if (session && session.fingerprint !== fingerprint) {
-      session.remove();
+      this.remove(session);
       return null;
     }
 

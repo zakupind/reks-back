@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 
+import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { Session } from './session.entity';
 import { User } from './user.entity';
@@ -30,5 +31,24 @@ export class SessionRepository extends Repository<Session> {
     await session.save();
 
     return tokensDto;
+  }
+
+  async checkSession(
+    refreshCredentialsDto: RefreshCredentialsDto,
+  ): Promise<Session> {
+    const { refreshToken, fingerprint } = refreshCredentialsDto;
+
+    const session = await this.findOne({
+      where: {
+        refreshToken,
+      },
+    });
+
+    if (session && session.fingerprint !== fingerprint) {
+      session.remove();
+      return null;
+    }
+
+    return session;
   }
 }

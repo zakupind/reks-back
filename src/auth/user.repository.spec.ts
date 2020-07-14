@@ -27,7 +27,7 @@ describe('UserRepository', () => {
 
     beforeEach(() => {
       save = jest.fn();
-      userRepository.create = jest.fn().mockReturnValue({ save });
+      jest.spyOn(userRepository, 'create').mockReturnValue({ save });
     });
 
     it('successfully signs up the user', () => {
@@ -52,27 +52,30 @@ describe('UserRepository', () => {
 
   describe('validateUserPassword', () => {
     let user;
+    let findOne: jest.SpyInstance;
+    let validatePassword: jest.SpyInstance;
     beforeEach(() => {
-      userRepository.findOne = jest.fn();
+      findOne = jest.spyOn(userRepository, 'findOne');
 
       user = new User();
       user.username = 'TestUsername';
-      user.validatePassword = jest.fn();
+
+      validatePassword = jest.spyOn(user, 'validatePassword');
     });
 
     it('returns the username as validation is succesful', async () => {
-      userRepository.findOne.mockResolvedValue(user);
-      user.validatePassword.mockResolvedValue(true);
+      findOne.mockResolvedValue(user);
+      validatePassword.mockResolvedValue(true);
 
       const result = await userRepository.validateUserPassword(
         mockCredentialsDto,
       );
 
-      expect(result).toEqual('TestUsername');
+      expect(result.username).toEqual('TestUsername');
     });
 
     it('returns null as user cannot be found', async () => {
-      userRepository.findOne.mockResolvedValue(null);
+      findOne.mockResolvedValue(null);
 
       const result = await userRepository.validateUserPassword(
         mockCredentialsDto,
@@ -83,8 +86,8 @@ describe('UserRepository', () => {
     });
 
     it('returns null as password is invalid', async () => {
-      userRepository.findOne.mockResolvedValue(user);
-      user.validatePassword.mockResolvedValue(false);
+      findOne.mockResolvedValue(user);
+      validatePassword.mockResolvedValue(false);
 
       const result = await userRepository.validateUserPassword(
         mockCredentialsDto,

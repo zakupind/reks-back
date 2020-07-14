@@ -34,15 +34,13 @@ export class AuthService {
   }
 
   async signIn(authCredentialsDto: AuthCredentialsDto): Promise<TokensDto> {
+    const { username, fingerprint } = authCredentialsDto;
+
     const user = await this.userRepository.validateUserPassword(
       authCredentialsDto,
     );
 
-    const { username, fingerprint } = authCredentialsDto;
-
-    if (!username) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const payload: JwtPayload = { username };
     const tokensDto: TokensDto = this.createTokens(payload);
@@ -57,44 +55,26 @@ export class AuthService {
   async refresh(
     refreshCredentialsDto: RefreshCredentialsDto,
   ): Promise<TokensDto> {
-    const { refreshToken, fingerprint } = refreshCredentialsDto;
+    const { refreshToken } = refreshCredentialsDto;
 
     let username: string;
     try {
       username = this.jwtService.verify<JwtPayload>(refreshToken).username;
     } catch (error) {
-      throw new UnauthorizedException(
-        'Please, sign in with login form. Refresh token has expired.',
-      );
+      throw new UnauthorizedException('Please, sign in with login form.');
     }
 
-    const session = await this.sessionRepository.findOne({
-      where: {
-        refreshToken,
-      },
-    });
+    const session = await this.sessionRepository.checkSession(
+      refreshCredentialsDto,
+    );
 
     if (!session) {
       throw new UnauthorizedException('Please, sign in with login form.');
     }
 
-    const fingerprintDoesntMatch = session.fingerprint !== fingerprint;
-
-    if (fingerprintDoesntMatch) {
-      session.remove();
-      throw new UnauthorizedException(
-        'Please, sign in with login form. Credentials dont match.',
-      );
-    }
-
     const payload: JwtPayload = { username };
-
     const tokensDto: TokensDto = this.createTokens(payload);
-
-    session.accessToken = tokensDto.accessToken;
-    session.refreshToken = tokensDto.refreshToken;
-
-    await session.save();
+    await this.sessionRepository.update(session.id, tokensDto);
 
     return tokensDto;
   }

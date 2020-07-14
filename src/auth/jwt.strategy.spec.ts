@@ -1,24 +1,19 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 
 import { JwtStrategy } from './jwt.strategy';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 
-const mockUserRepository = () => ({
-  findOne: jest.fn(),
-});
-
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
-  let userRepository;
+  let userRepository: UserRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [
-        JwtStrategy,
-        { provide: UserRepository, useFactory: mockUserRepository },
-      ],
+      imports: [ConfigModule.forRoot()],
+      providers: [JwtStrategy, UserRepository, ConfigService],
     }).compile();
 
     jwtStrategy = module.get<JwtStrategy>(JwtStrategy);
@@ -30,7 +25,7 @@ describe('JwtStrategy', () => {
       const user = new User();
       user.username = 'TestUser';
 
-      userRepository.findOne.mockResolvedValue(user);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       const result = await jwtStrategy.validate({ username: 'TestUser' });
 
       expect(userRepository.findOne).toHaveBeenCalledWith({
@@ -39,11 +34,11 @@ describe('JwtStrategy', () => {
       expect(result).toEqual(user);
     });
     it('throws an unathorized exception as user cannot be found', async () => {
-      userRepository.findOne.mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      expect(jwtStrategy.validate({ username: 'TestUser' })).rejects.toThrow(
-        UnauthorizedException,
-      );
+      return expect(
+        jwtStrategy.validate({ username: 'TestUser' }),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 });

@@ -30,7 +30,9 @@ export class Session extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(type => User, user => user.sessions, { eager: false })
+  @ManyToOne(type => User, user => user.sessions, {
+    eager: false,
+  })
   user: User;
 
   @Column()

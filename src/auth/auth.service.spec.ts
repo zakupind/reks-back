@@ -66,7 +66,7 @@ describe('AuthService', () => {
     it('should throw unauthorized exception as password is invalid', () => {
       const validate = jest
         .spyOn(userRepository, 'validateUserPassword')
-        .mockRejectedValue(new UnauthorizedException());
+        .mockResolvedValue(null);
 
       expect(validate).not.toHaveBeenCalled();
 
@@ -140,9 +140,6 @@ describe('AuthService', () => {
     it('throws unathorized as something wrong with credentials', () => {
       jest.spyOn(jwtService, 'verify').mockReturnValue(testPayload);
       jest.spyOn(sessionRepository, 'checkSession').mockResolvedValue(null);
-      jest.spyOn(jwtService, 'verify').mockImplementation(() => {
-        throw Error;
-      });
 
       return expect(authService.refresh(refreshDto)).rejects.toThrow(
         UnauthorizedException,

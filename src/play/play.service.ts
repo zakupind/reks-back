@@ -19,8 +19,6 @@ export class PlayService {
       active,
     } = addGameDto;
 
-    console.log(multiplier);
-
     const play = this.playRepository.create();
 
     play.game = game;

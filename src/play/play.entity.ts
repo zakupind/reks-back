@@ -38,13 +38,13 @@ export class Play extends BaseEntity {
   @Column({ default: false })
   active: boolean;
 
-  @ManyToOne(type => User, user => user.plays, { eager: false })
+  @ManyToOne(type => User, user => user.plays, { eager: true })
   user: User;
 
   @Column()
   userId: number;
 
-  @ManyToOne(type => Seed, seed => seed.plays, { eager: false })
+  @ManyToOne(type => Seed, seed => seed.plays, { eager: true })
   seed: Seed;
 
   @Column()

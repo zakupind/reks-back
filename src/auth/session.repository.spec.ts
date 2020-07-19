@@ -39,7 +39,8 @@ describe('UserRepository', () => {
         mockSession,
       ];
 
-      jest.spyOn(sessionRepository, 'find').mockResolvedValue(mockSessions);
+      mockUser.sessions = mockSessions;
+
       jest.spyOn(sessionRepository, 'remove').mockResolvedValue(mockSession);
       jest.spyOn(sessionRepository, 'create').mockReturnValue(mockSession);
       jest.spyOn(sessionRepository, 'save').mockResolvedValue(null);

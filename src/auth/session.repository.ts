@@ -12,23 +12,19 @@ export class SessionRepository extends Repository<Session> {
     tokensDto: TokensDto,
     fingerprint: string,
   ): Promise<TokensDto> {
-    const sessions = await this.find({
-      where: {
-        userId: user.id,
-      },
-    });
+    const { sessions } = user;
 
     if (sessions.length >= 5) {
       await this.remove(sessions);
     }
 
-    const session = this.create();
+    const newSession = this.create();
 
-    session.user = user;
-    session.accessToken = tokensDto.accessToken;
-    session.refreshToken = tokensDto.refreshToken;
-    session.fingerprint = fingerprint;
-    await this.save(session);
+    newSession.user = user;
+    newSession.accessToken = tokensDto.accessToken;
+    newSession.refreshToken = tokensDto.refreshToken;
+    newSession.fingerprint = fingerprint;
+    await this.save(newSession);
 
     return tokensDto;
   }

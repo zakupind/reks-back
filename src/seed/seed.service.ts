@@ -81,16 +81,27 @@ export class SeedService {
   }
 
   async revealSeed(user: User): Promise<void> {
-    const seed = await this.seedRepository.findOne({
+    const lastSeed = await this.seedRepository.findOne({
       where: {
-        userId: user.id,
-        revealed: false,
+        user,
+        active: true,
       },
     });
 
-    seed.revealed = true;
-    await this.seedRepository.update(seed.id, seed);
+    lastSeed.revealed = true;
+    lastSeed.active = false;
+    await this.seedRepository.update(lastSeed.id, lastSeed);
 
-    this.createSeed(user);
+    const newSeed = await this.seedRepository.findOne({
+      user,
+      revealed: false,
+      active: false,
+    });
+
+    newSeed.active = true;
+
+    await this.seedRepository.update(newSeed.id, newSeed);
+
+    await this.createSeed(user);
   }
 }

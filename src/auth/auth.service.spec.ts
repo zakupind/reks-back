@@ -4,6 +4,8 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { SeedRepository } from '../seed/seed.repository';
+import { SeedService } from '../seed/seed.service';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
@@ -26,6 +28,7 @@ describe('AuthService', () => {
   let userRepository: UserRepository;
   let sessionRepository: SessionRepository;
   let jwtService: JwtService;
+  let seedService: SeedService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,10 +48,12 @@ describe('AuthService', () => {
       ],
       providers: [
         AuthService,
+        SeedService,
         UserRepository,
         SessionRepository,
         JwtStrategy,
         ConfigService,
+        SeedRepository,
       ],
     }).compile();
 
@@ -56,6 +61,7 @@ describe('AuthService', () => {
     userRepository = module.get<UserRepository>(UserRepository);
     sessionRepository = module.get<SessionRepository>(SessionRepository);
     jwtService = module.get<JwtService>(JwtService);
+    seedService = module.get<SeedService>(SeedService);
   });
 
   it('should be defined', () => {
@@ -103,6 +109,7 @@ describe('AuthService', () => {
         refreshToken: 'testToken',
       };
       jest.spyOn(userRepository, 'signUp').mockResolvedValue(undefined);
+      jest.spyOn(seedService, 'createSeeds').mockResolvedValue(undefined);
 
       jest
         .spyOn(sessionRepository, 'addSession')

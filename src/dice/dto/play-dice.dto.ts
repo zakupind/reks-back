@@ -20,6 +20,6 @@ export class PlayDiceDto {
 
   @IsNumber()
   @Min(1)
-  @Transform(parseFloat)
+  @Transform(parseInt)
   amount: number;
 }

@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -24,21 +25,24 @@ export class Seed extends BaseEntity {
   @Column()
   clientSeed: string;
 
-  @Column({ default: 1 })
+  @Column({ default: 0 })
   nonce: number;
 
   @Column({ default: false })
   revealed: boolean;
+
+  @Column({ default: false })
+  active: boolean;
+
+  @ManyToOne(type => User, user => user.seeds, { eager: false })
+  user: User;
+
+  @Column()
+  userId: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToOne(type => User, user => user.id, { eager: false })
-  user: User;
-
-  @Column()
-  userId: number;
 }

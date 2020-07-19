@@ -13,17 +13,18 @@ export class SeedService {
   async createUserHash(user: User): Promise<string> {
     const seed = await this.seedRepository.findOne({
       where: {
-        userId: user.id,
+        user,
         revealed: false,
+        active: true,
       },
     });
 
+    seed.nonce += 1;
     const { serverSeed, clientSeed, nonce } = seed;
 
     const hmac = crypto.createHmac('sha256', serverSeed);
     hmac.update(`${clientSeed}:${nonce}`);
 
-    seed.nonce += 1;
     await this.seedRepository.update(seed.id, seed);
 
     return hmac.digest('hex');
@@ -49,19 +50,31 @@ export class SeedService {
   }
 
   async createSeed(user: User): Promise<Seed> {
+    const activeSeed = await this.seedRepository.findOne({
+      where: {
+        user,
+        active: true,
+      },
+    });
+
     const seed = this.seedRepository.create();
-    seed.userId = user.id;
+    seed.user = user;
     seed.serverSeed = this.randomHash();
     seed.serverSeedHashed = this.createHash(seed.serverSeed);
     seed.clientSeed = this.randomHash().substr(0, 8);
+
+    if (!activeSeed) {
+      seed.active = true;
+    }
 
     await this.seedRepository.save(seed);
     return seed;
   }
 
   async createSeeds(user: User, amount: number): Promise<void> {
-    for (let i = 1; i <= amount; i++) {
-      this.createSeed(user);
+    const arr = new Array(amount);
+    for (const each of arr) {
+      await this.createSeed(user);
     }
   }
 

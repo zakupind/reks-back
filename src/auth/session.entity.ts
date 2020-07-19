@@ -24,12 +24,6 @@ export class Session extends BaseEntity {
   @Column()
   fingerprint: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @ManyToOne(type => User, user => user.sessions, {
     eager: false,
   })
@@ -37,4 +31,10 @@ export class Session extends BaseEntity {
 
   @Column()
   userId: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -9,7 +9,13 @@ export class PlayDiceDto {
   cursor: number;
 
   @IsBoolean()
-  @Transform(JSON.parse)
+  @Transform(above => {
+    try {
+      return JSON.parse(above);
+    } catch (error) {
+      return above;
+    }
+  })
   above: boolean;
 
   @IsNumber()

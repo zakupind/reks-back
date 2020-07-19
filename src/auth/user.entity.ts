@@ -9,8 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { TokensDto } from './dto/tokens.dto';
-import { JwtPayload } from './jwt-payload.interface';
+import { Seed } from '../seed/seed.entity';
 import { Session } from './session.entity';
 
 @Entity()
@@ -36,8 +35,11 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(type => Session, session => session.user, { eager: true })
+  @OneToMany(type => Session, session => session.user, { eager: false })
   sessions: Session[];
+
+  @OneToMany(type => Seed, seed => seed.user, { eager: false })
+  seeds: Seed[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hashed = await bcryptjs.hash(password, this.salt);

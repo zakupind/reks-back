@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { SeedService } from '../seed/seed.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
@@ -14,6 +15,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly jwtService: JwtService,
+    private readonly seedService: SeedService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<TokensDto> {
@@ -25,6 +27,8 @@ export class AuthService {
       username,
     };
     const tokensDto = this.createTokens(payload);
+
+    await this.seedService.createSeeds(user, 2);
 
     return await this.sessionRepository.addSession(
       user,

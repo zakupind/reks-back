@@ -6,7 +6,7 @@ export class PlayDiceDto {
   @Min(2)
   @Max(98)
   @Transform(parseFloat)
-  cursor: number;
+  position: number;
 
   @IsBoolean()
   @Transform(above => {

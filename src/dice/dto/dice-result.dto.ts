@@ -1,5 +1,5 @@
 export class DiceResultDto {
-  serverCursor: number;
+  serverPosition: number;
 
   multiplier: number;
 

@@ -21,23 +21,23 @@ export class DiceService {
   ) {}
 
   async playDice(playDiceDto: PlayDiceDto, user: User): Promise<DiceResultDto> {
-    const { cursor, above, amount } = playDiceDto;
+    const { position, above, amount } = playDiceDto;
     const houseEdge = +this.configService.get<string>('DICE_HOUSE_EDGE');
 
     const hex = await this.seedService.createUserHash(user);
     const float = this.seedService.generateFloat(hex);
 
-    const serverCursor = +(float * 100).toFixed(2);
+    const serverPosition = +(float * 100).toFixed(2);
 
     let multiplier: number;
 
     if (above) {
-      if (serverCursor > cursor) {
-        multiplier = (100 - houseEdge) / (100 - cursor);
+      if (serverPosition > position) {
+        multiplier = (100 - houseEdge) / (100 - position);
       }
     } else {
-      if (serverCursor < cursor) {
-        multiplier = (100 - houseEdge) / cursor;
+      if (serverPosition < position) {
+        multiplier = (100 - houseEdge) / position;
       }
     }
 
@@ -50,7 +50,7 @@ export class DiceService {
 
     const result: DiceResultDto = {
       amount: amountAfterGame,
-      serverCursor,
+      serverPosition,
       multiplier,
     };
 

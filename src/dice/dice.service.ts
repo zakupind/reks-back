@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { User } from '../auth/user.entity';
 import { SeedService } from '../seed/seed.service';
-import { PlayDiceResultDto } from './dto/play-dice-result.dto';
+import { DiceResultDto } from './dto/dice-result.dto';
 import { PlayDiceDto } from './dto/play-dice.dto';
 
 @Injectable()
@@ -13,10 +13,7 @@ export class DiceService {
     private configService: ConfigService,
   ) {}
 
-  async playDice(
-    playDiceDto: PlayDiceDto,
-    user: User,
-  ): Promise<PlayDiceResultDto> {
+  async playDice(playDiceDto: PlayDiceDto, user: User): Promise<DiceResultDto> {
     const { cursor, above, amount } = playDiceDto;
     const houseEdge = +this.configService.get<string>('DICE_HOUSE_EDGE');
 
@@ -44,7 +41,7 @@ export class DiceService {
     multiplier = +multiplier.toFixed(2);
     const amountAfterGame = amount * multiplier;
 
-    const result: PlayDiceResultDto = {
+    const result: DiceResultDto = {
       amount: amountAfterGame,
       serverCursor,
       multiplier,

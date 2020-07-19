@@ -5,8 +5,8 @@ import { SeedService } from '../seed/seed.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
-import { JwtPayload } from './jwt-payload.interface';
 import { SessionRepository } from './session.repository';
+import { JwtPayload } from './types/jwt-payload.interface';
 import { UserRepository } from './user.repository';
 
 @Injectable()

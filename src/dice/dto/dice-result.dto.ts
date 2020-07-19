@@ -1,4 +1,4 @@
-export class PlayDiceResultDto {
+export class DiceResultDto {
   serverCursor: number;
 
   multiplier: number;

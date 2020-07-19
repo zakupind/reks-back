@@ -10,10 +10,10 @@ import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
-import { JwtPayload } from './jwt-payload.interface';
 import { JwtStrategy } from './jwt.strategy';
 import { Session } from './session.entity';
 import { SessionRepository } from './session.repository';
+import { JwtPayload } from './types/jwt-payload.interface';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 

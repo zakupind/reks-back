@@ -45,7 +45,7 @@ export class DiceService {
       multiplier = 0;
     }
 
-    multiplier = +multiplier.toFixed(2);
+    multiplier = +multiplier.toFixed(4);
     const amountAfterGame = amount * multiplier;
 
     const result: DiceResultDto = {

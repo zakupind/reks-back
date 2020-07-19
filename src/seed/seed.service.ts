@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
 
 import { User } from '../auth/user.entity';
+import { GetHashesDto } from './dto/get-hashes.dto';
 import { Seed } from './seed.entity';
 import { SeedRepository } from './seed.repository';
 
@@ -25,7 +26,7 @@ export class SeedService {
     const hmac = crypto.createHmac('sha256', serverSeed);
     hmac.update(`${clientSeed}:${nonce}:${cursor}`);
 
-    await this.seedRepository.update(seed.id, seed);
+    await this.seedRepository.save(seed);
 
     return hmac.digest('hex');
   }
@@ -80,28 +81,38 @@ export class SeedService {
     }
   }
 
-  async revealSeed(user: User): Promise<void> {
-    const lastSeed = await this.seedRepository.findOne({
-      where: {
-        user,
-        active: true,
-      },
-    });
-
-    lastSeed.revealed = true;
-    lastSeed.active = false;
-    await this.seedRepository.update(lastSeed.id, lastSeed);
-
-    const newSeed = await this.seedRepository.findOne({
+  async revealSeed(user: User, clientSeed: string): Promise<void> {
+    const { currentSeed, nextSeed } = await this.seedRepository.getUserSeeds(
       user,
-      revealed: false,
-      active: false,
-    });
+    );
 
-    newSeed.active = true;
+    currentSeed.revealed = true;
+    currentSeed.active = false;
+    nextSeed.active = true;
+    if (clientSeed) nextSeed.clientSeed = clientSeed;
 
-    await this.seedRepository.update(newSeed.id, newSeed);
+    await this.seedRepository.save([currentSeed, nextSeed]);
 
     await this.createSeed(user);
+  }
+
+  async getHashes(user: User): Promise<GetHashesDto> {
+    const {
+      currentSeed: { nonce, clientSeed, serverSeedHashed },
+      nextSeed: {
+        serverSeedHashed: nextServerSeedHashed,
+        clientSeed: nextClientSeed,
+      },
+    } = await this.seedRepository.getUserSeeds(user);
+
+    const getHashesDto: GetHashesDto = {
+      nonce,
+      clientSeed,
+      serverSeedHashed,
+      nextClientSeed,
+      nextServerSeedHashed,
+    };
+
+    return getHashesDto;
   }
 }

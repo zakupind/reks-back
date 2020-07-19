@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { DiceModule } from './dice/dice.module';
 import ormconfig from './ormconfig';
 import { PlayModule } from './play/play.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PlayModule } from './play/play.module';
     AuthModule,
     DiceModule,
     PlayModule,
+    SeedModule,
   ],
 })
 export class AppModule {}

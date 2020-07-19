@@ -4,12 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from '../auth/user.entity';
+import { Play } from '../play/play.entity';
 
 @Entity()
 export class Seed extends BaseEntity {
@@ -39,6 +40,9 @@ export class Seed extends BaseEntity {
 
   @Column()
   userId: number;
+
+  @OneToMany(type => Play, play => play.seed, { eager: false })
+  plays: Play[];
 
   @CreateDateColumn()
   createdAt: Date;

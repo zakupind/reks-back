@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { DiceModule } from './dice/dice.module';
 import ormconfig from './ormconfig';
+import { PlayModule } from './play/play.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import ormconfig from './ormconfig';
     }),
     AuthModule,
     DiceModule,
+    PlayModule,
   ],
 })
 export class AppModule {}

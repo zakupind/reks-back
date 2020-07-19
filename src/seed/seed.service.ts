@@ -10,7 +10,7 @@ import { SeedRepository } from './seed.repository';
 export class SeedService {
   constructor(private seedRepository: SeedRepository) {}
 
-  async createUserHash(user: User): Promise<string> {
+  async createUserHash(user: User, cursor = 0): Promise<string> {
     const seed = await this.seedRepository.findOne({
       where: {
         user,
@@ -23,7 +23,7 @@ export class SeedService {
     const { serverSeed, clientSeed, nonce } = seed;
 
     const hmac = crypto.createHmac('sha256', serverSeed);
-    hmac.update(`${clientSeed}:${nonce}`);
+    hmac.update(`${clientSeed}:${nonce}:${cursor}`);
 
     await this.seedRepository.update(seed.id, seed);
 
@@ -39,8 +39,10 @@ export class SeedService {
     return hash.update(value).digest('hex');
   }
 
-  generateFloat(hash: string): number {
-    const substr = hash.substr(0, 8);
+  generateFloat(hash: string, inlineCursor = 0): number {
+    const length = 8;
+    const start = inlineCursor * length;
+    const substr = hash.substr(start, length);
     const maxValue = 2 ** 32 - 1;
 
     const numberFromSubstr = parseInt(substr, 16);

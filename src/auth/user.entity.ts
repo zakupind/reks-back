@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Play } from '../play/play.entity';
 import { Seed } from '../seed/seed.entity';
 import { Session } from './session.entity';
 
@@ -40,6 +41,9 @@ export class User extends BaseEntity {
 
   @OneToMany(type => Seed, seed => seed.user, { eager: false })
   seeds: Seed[];
+
+  @OneToMany(type => Play, play => play.user, { eager: false })
+  plays: Play[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hashed = await bcryptjs.hash(password, this.salt);

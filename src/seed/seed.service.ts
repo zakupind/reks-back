@@ -40,9 +40,9 @@ export class SeedService {
     return hash.update(value).digest('hex');
   }
 
-  generateFloat(hash: string, inlineCursor = 0): number {
+  generateFloat(hash: string, cursor = 0): number {
     const length = 8;
-    const start = inlineCursor * length;
+    const start = cursor * length;
     const substr = hash.substr(start, length);
     const maxValue = 2 ** 32 - 1;
 
@@ -75,8 +75,7 @@ export class SeedService {
   }
 
   async createSeeds(user: User, amount: number): Promise<void> {
-    const arr = new Array(amount);
-    for (const each of arr) {
+    for (let i = 1; i <= amount; i++) {
       await this.createSeed(user);
     }
   }

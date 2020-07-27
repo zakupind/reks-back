@@ -13,7 +13,7 @@ import { TokensDto } from './dto/tokens.dto';
 import { JwtStrategy } from './jwt.strategy';
 import { Session } from './session.entity';
 import { SessionRepository } from './session.repository';
-import { JwtPayload } from './types/jwt-payload.interface';
+import { JwtPayload } from './type/jwt-payload.interface';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 

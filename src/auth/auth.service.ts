@@ -6,7 +6,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { RefreshCredentialsDto } from './dto/refresh-credentials.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { SessionRepository } from './session.repository';
-import { JwtPayload } from './types/jwt-payload.interface';
+import { JwtPayload } from './type/jwt-payload.interface';
 import { UserRepository } from './user.repository';
 
 @Injectable()

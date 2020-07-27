@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '../auth/user.entity';
 import { AddGameDto } from '../play/dto/add-game.dto';
 import { PlayService } from '../play/play.service';
-import { GameEnum } from '../play/types/game.enum';
+import { GameEnum } from '../play/type/game.enum';
 import { SeedRepository } from '../seed/seed.repository';
 import { SeedService } from '../seed/seed.service';
 import { DiceResultDto } from './dto/dice-result.dto';

@@ -10,7 +10,7 @@ import {
 
 import { User } from '../auth/user.entity';
 import { Seed } from '../seed/seed.entity';
-import { GameEnum } from './types/game.enum';
+import { GameEnum } from './type/game.enum';
 
 @Entity()
 export class Play extends BaseEntity {
@@ -28,9 +28,6 @@ export class Play extends BaseEntity {
 
   @Column({ default: 0 })
   cursor: number;
-
-  @Column({ default: 0 })
-  inlineCursor: number;
 
   @Column()
   nonce: number;

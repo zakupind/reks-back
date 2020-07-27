@@ -15,8 +15,4 @@ RUN npm install
 # копируем исходный код
 COPY . .
 
-# migrations
-# RUN npm run typeorm:run
-
-EXPOSE 3000
 CMD [ "npm", "start" ]

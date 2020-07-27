@@ -1,4 +1,11 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Headers,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -12,21 +19,48 @@ export class AuthController {
   @Post('signup')
   async signUp(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
+    @Headers('user-agent') userAgent: string,
   ): Promise<TokensDto> {
+    const { fingerprint } = authCredentialsDto;
+    if (!fingerprint) {
+      if (userAgent) {
+        authCredentialsDto.fingerprint = userAgent;
+      } else
+        throw new BadRequestException('Please, provide device fingerprint.');
+    }
+
     return this.authService.signUp(authCredentialsDto);
   }
 
   @Post('signin')
   async signIn(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
+    @Headers('user-agent') userAgent: string,
   ): Promise<TokensDto> {
+    const { fingerprint } = authCredentialsDto;
+    if (!fingerprint) {
+      if (userAgent) {
+        authCredentialsDto.fingerprint = userAgent;
+      } else
+        throw new BadRequestException('Please, provide device fingerprint.');
+    }
+
     return this.authService.signIn(authCredentialsDto);
   }
 
   @Post('refresh')
   async refresh(
     @Body(ValidationPipe) refreshCredentialsDto: RefreshCredentialsDto,
+    @Headers('user-agent') userAgent: string,
   ): Promise<TokensDto> {
+    const { fingerprint } = refreshCredentialsDto;
+    if (!fingerprint) {
+      if (userAgent) {
+        refreshCredentialsDto.fingerprint = userAgent;
+      } else
+        throw new BadRequestException('Please, provide device fingerprint.');
+    }
+
     return this.authService.refresh(refreshCredentialsDto);
   }
 }

@@ -12,7 +12,7 @@ export class SessionRepository extends Repository<Session> {
     tokensDto: TokensDto,
     fingerprint: string,
   ): Promise<TokensDto> {
-    const { sessions } = user;
+    const sessions = await this.find({ where: { user } });
 
     if (sessions.length >= 5) {
       await this.remove(sessions);

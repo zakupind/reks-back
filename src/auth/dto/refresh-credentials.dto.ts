@@ -1,6 +1,7 @@
-import { IsString, Matches } from 'class-validator';
+import { IsOptional, IsString, Matches } from 'class-validator';
 
 export class RefreshCredentialsDto {
+  @IsOptional()
   @IsString()
   fingerprint: string;
 

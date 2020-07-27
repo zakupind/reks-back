@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class AuthCredentialsDto {
   @IsString()
@@ -11,6 +11,7 @@ export class AuthCredentialsDto {
   @MaxLength(20)
   password: string;
 
+  @IsOptional()
   @IsString()
   fingerprint: string;
 }

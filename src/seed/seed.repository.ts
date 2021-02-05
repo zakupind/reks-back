@@ -7,7 +7,7 @@ import { Seed } from './seed.entity';
 @EntityRepository(Seed)
 export class SeedRepository extends Repository<Seed> {
   async getUserSeeds(user: User): Promise<GetUserSeedsDto> {
-    const [currentSeed, nextSeed] = await this.find({
+    const [nextSeed, currentSeed] = await this.find({
       where: {
         user,
         revealed: false,
@@ -18,11 +18,9 @@ export class SeedRepository extends Repository<Seed> {
       take: 2,
     });
 
-    const getUserSeedsDto: GetUserSeedsDto = {
+    return {
       currentSeed,
       nextSeed,
     };
-
-    return getUserSeedsDto;
   }
 }

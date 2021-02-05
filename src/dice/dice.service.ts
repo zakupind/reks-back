@@ -84,5 +84,6 @@ export class DiceService {
     };
 
     await this.playService.addGame(addGameDto);
+    await this.seedService.increaseNonce(user);
   }
 }

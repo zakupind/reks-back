@@ -24,7 +24,7 @@ export class Session extends BaseEntity {
   @Column()
   fingerprint: string;
 
-  @ManyToOne(type => User, user => user.sessions, {
+  @ManyToOne(() => User, user => user.sessions, {
     eager: false,
   })
   user: User;

@@ -19,14 +19,10 @@ export class SeedService {
         active: true,
       },
     });
-
-    seed.nonce += 1;
     const { serverSeed, clientSeed, nonce } = seed;
 
     const hmac = crypto.createHmac('sha256', serverSeed);
     hmac.update(`${clientSeed}:${nonce}:${cursor}`);
-
-    await this.seedRepository.save(seed);
 
     return hmac.digest('hex');
   }
@@ -47,9 +43,7 @@ export class SeedService {
     const maxValue = 2 ** 32 - 1;
 
     const numberFromSubstr = parseInt(substr, 16);
-    const float = numberFromSubstr / maxValue;
-
-    return float;
+    return numberFromSubstr / maxValue;
   }
 
   async createSeed(user: User): Promise<Seed> {
@@ -104,14 +98,22 @@ export class SeedService {
       },
     } = await this.seedRepository.getUserSeeds(user);
 
-    const getHashesDto: GetHashesDto = {
+    return {
       nonce,
       clientSeed,
       serverSeedHashed,
       nextClientSeed,
       nextServerSeedHashed,
     };
+  }
 
-    return getHashesDto;
+  async increaseNonce(user: User): Promise<Seed> {
+    const seed = await this.seedRepository.findOne({
+      user,
+      active: true,
+      revealed: false,
+    });
+    seed.nonce += 1;
+    return this.seedRepository.save(seed);
   }
 }

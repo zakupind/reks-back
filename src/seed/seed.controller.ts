@@ -32,10 +32,11 @@ export class SeedController {
 
   // PAGINATION
   @UseGuards(JwtAuthGuard)
-  @Get('findandCount')
+  @Get('findAndCount')
   async findAndCount(@GetUser() user: User): Promise<Seed[]> {
     const take = 5;
-    const skip = take * 1;
+    const pageNumber = 0; // from zero to infinity
+    const skip = take * pageNumber;
     return this.seedRepository.find({
       where: {
         user,

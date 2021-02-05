@@ -12,10 +12,11 @@ export class SessionRepository extends Repository<Session> {
     tokensDto: TokensDto,
     fingerprint: string,
   ): Promise<TokensDto> {
-    const sessions = await this.find({ where: { user } });
+    const sessions = await this.find({ where: { user, active: true } });
 
     if (sessions.length >= 5) {
-      await this.remove(sessions);
+      sessions.forEach(s => (s.active = false));
+      await this.save(sessions);
     }
 
     const newSession = this.create();
@@ -41,7 +42,7 @@ export class SessionRepository extends Repository<Session> {
     });
 
     if (session && session.fingerprint !== fingerprint) {
-      this.remove(session);
+      await this.update(session, { active: false });
       return null;
     }
 

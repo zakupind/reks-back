@@ -40,9 +40,9 @@ export class SeedService {
     return hash.update(value).digest('hex');
   }
 
-  generateFloat(hash: string, cursor = 0): number {
+  generateFloat(hash: string, inlineCursor = 0): number {
     const length = 8;
-    const start = cursor * length;
+    const start = inlineCursor * length;
     const substr = hash.substr(start, length);
     const maxValue = 2 ** 32 - 1;
 

@@ -5,21 +5,21 @@ export class PlayDiceDto {
   @IsNumber()
   @Min(2)
   @Max(98)
-  @Transform(parseFloat)
+  @Transform(({ value }) => parseFloat(value))
   position: number;
 
   @IsBoolean()
-  @Transform(above => {
+  @Transform(({ value }) => {
     try {
-      return JSON.parse(above);
+      return JSON.parse(value);
     } catch (error) {
-      return above;
+      return value;
     }
   })
   above: boolean;
 
   @IsNumber()
   @Min(1)
-  @Transform(parseInt)
+  @Transform(({ value }) => parseInt(value))
   amount: number;
 }

@@ -18,7 +18,7 @@ const mockRefreshDto: RefreshCredentialsDto = {
   fingerprint: mockFingerprint,
 };
 
-describe('UserRepository', () => {
+describe('SessionRepository', () => {
   let sessionRepository: SessionRepository;
 
   beforeEach(async () => {
@@ -30,7 +30,7 @@ describe('UserRepository', () => {
   });
 
   describe('addSession', () => {
-    it('succesfully adds session', () => {
+    it('successfully adds session', () => {
       const mockSessions = [
         mockSession,
         mockSession,
@@ -41,7 +41,8 @@ describe('UserRepository', () => {
 
       mockUser.sessions = mockSessions;
 
-      jest.spyOn(sessionRepository, 'remove').mockResolvedValue(mockSession);
+      jest.spyOn(sessionRepository, 'find').mockResolvedValue(mockSessions);
+      jest.spyOn(sessionRepository, 'save').mockResolvedValue(null);
       jest.spyOn(sessionRepository, 'create').mockReturnValue(mockSession);
       jest.spyOn(sessionRepository, 'save').mockResolvedValue(null);
 

@@ -13,8 +13,9 @@ export class SeedRepository extends Repository<Seed> {
         revealed: false,
       },
       order: {
-        active: 'DESC',
+        id: 'DESC',
       },
+      take: 2,
     });
 
     const getUserSeedsDto: GetUserSeedsDto = {

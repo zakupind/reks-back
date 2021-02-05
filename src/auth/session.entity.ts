@@ -32,6 +32,9 @@ export class Session extends BaseEntity {
   @Column()
   userId: number;
 
+  @Column({ default: true })
+  active: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

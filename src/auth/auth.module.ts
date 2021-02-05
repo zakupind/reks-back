@@ -17,12 +17,16 @@ import { UserRepository } from './user.repository';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
-        signOptions: {
-          expiresIn: '60s',
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const expiresIn =
+          configService.get('NODE_ENV') === 'development' ? '60d' : '60s';
+        return {
+          secret: configService.get('JWT_SECRET'),
+          signOptions: {
+            expiresIn,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([

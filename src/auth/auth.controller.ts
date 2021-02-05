@@ -37,13 +37,10 @@ export class AuthController {
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
     @Headers('user-agent') userAgent: string,
   ): Promise<TokensDto> {
-    const { fingerprint } = authCredentialsDto;
-    if (!fingerprint) {
-      if (userAgent) {
-        authCredentialsDto.fingerprint = userAgent;
-      } else
-        throw new BadRequestException('Please, provide device fingerprint.');
-    }
+    if (userAgent) {
+      authCredentialsDto.fingerprint = userAgent;
+    } else
+      throw new BadRequestException('Please, provide open your user agent.');
 
     return this.authService.signIn(authCredentialsDto);
   }
@@ -53,13 +50,9 @@ export class AuthController {
     @Body(ValidationPipe) refreshCredentialsDto: RefreshCredentialsDto,
     @Headers('user-agent') userAgent: string,
   ): Promise<TokensDto> {
-    const { fingerprint } = refreshCredentialsDto;
-    if (!fingerprint) {
-      if (userAgent) {
-        refreshCredentialsDto.fingerprint = userAgent;
-      } else
-        throw new BadRequestException('Please, provide device fingerprint.');
-    }
+    if (userAgent) {
+      refreshCredentialsDto.fingerprint = userAgent;
+    } else throw new BadRequestException('Please, provide device fingerprint.');
 
     return this.authService.refresh(refreshCredentialsDto);
   }

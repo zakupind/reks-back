@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from './auth/auth.module';
-import { DiceModule } from './dice/dice.module';
 import ormconfig from './ormconfig';
-import { PlayModule } from './play/play.module';
-import { SeedModule } from './seed/seed.module';
+import { ProductModule } from './product/product.module';
+import { RarserModule } from './parser/parser.module';
+import { SearchModule } from './search/search.module';
+
 
 @Module({
   imports: [
@@ -14,10 +14,9 @@ import { SeedModule } from './seed/seed.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    AuthModule,
-    DiceModule,
-    PlayModule,
-    SeedModule,
+    ProductModule,
+    RarserModule,
+    SearchModule
   ],
 })
 export class AppModule {}

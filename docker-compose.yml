@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    image: backend
-    env_file: .env
-    environment:
-      DB_HOST: database
-    depends_on:
-      - database
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '3000:3000'
+  #   image: backend
+  #   env_file: .env
+  #   environment:
+  #     DB_HOST: database
+  #   depends_on:
+  #     - database
 
   database:
     image: postgres # use latest official postgres version
